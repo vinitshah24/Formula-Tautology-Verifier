@@ -30,9 +30,6 @@ class Expression:
         """ Overwrites the inbuilt eq function """
         return self.__class__ == other.__class__ and self.equals(other)
 
-    # def _is_fundamental(self, left_side, right_side):
-    #     return is_fundamental
-
     def _append_leaves(self, left_side, right_side):
         leaves = [f"~{node}" for node in left_side]
         leaves.extend([str(node) for node in right_side])
