@@ -30,6 +30,25 @@ class Expression:
         """ Overwrites the inbuilt eq function """
         return self.__class__ == other.__class__ and self.equals(other)
 
+    # def _is_fundamental(self, left_side, right_side):
+    #     return is_fundamental
+
+    def _append_leaves(self, left_side, right_side):
+        leaves = [f"~{node}" for node in left_side]
+        leaves.extend([str(node) for node in right_side])
+        leaf_list.append(leaves)
+        global is_fundamental
+        if len(left_side) == len(right_side):
+            count = 0
+            for node in left_side:
+                if node in right_side:
+                    count += 1
+            if len(left_side) == count:
+                is_fundamental = False
+                fundamental_list.append(leaves)
+        if is_fundamental:
+            fundamental_list.append(leaves)
+
     def _evaluate_left(self, left_side, right_side):
         """ Evaluates the left side of the tree """
         is_nf = True
@@ -70,25 +89,6 @@ class Expression:
                 break
         return left_side, right_side, is_nf, is_return
 
-    def _append_leaves(self, left_side, right_side):
-        leaves = [f"~{node}" for node in left_side]
-        leaves.extend([str(node) for node in right_side])
-        leaf_list.append(leaves)
-        if self._is_fundamental(left_side, right_side):
-            fundamental_list.append(leaves)
-
-    def _is_fundamental(self, left_side, right_side):
-        global is_non_fundamental
-        if len(left_side) == len(right_side):
-            count = 0
-            for node in left_side:
-                if node in right_side:
-                    count += 1
-            if len(left_side) == count:
-                is_non_fundamental = True
-                return False
-        return not is_non_fundamental
-
     def evaluate(self, left_side, right_side):
         """ Evaluates the left and right side based on the RS method """
         try:
@@ -106,6 +106,7 @@ class Expression:
                     return False
         except Exception as e:
             print(f"Exception caught while evaluating the expression {e}")
+
 
 class ConjunctionOperator(Expression):
     """ Class to perform AND operation for the inputs """
@@ -228,19 +229,15 @@ def initialize_variables(*prop):
 
 leaf_list = []
 fundamental_list = []
-is_non_fundamental = False
+is_fundamental = True
 a, b, c, d = initialize_variables('a', 'b', 'c', 'd')
-# "~(a >> c) >> (~(c | d) >> (a & ~c))"
-# "~(a >> c) >> (~(c | d) >> (a & c))"
 expression = input("Enter the Formula: ")
 expression = expression.lower()
 prop_expr = eval(expression)
-print(f"Propositional Expression: {prop_expr}")
 is_tautology = prop_expr.evaluate([], [prop_expr])
 if is_tautology:
-    print("Expression is a Tautology")
+    print(f"Propotional Formula {prop_expr} is a Tautology")
     print(f"Leaves of the tree: {leaf_list}")
     print(f"Fundamental nodes: {fundamental_list}")
 else:
-    print("Expression is NOT a Tautology")
-print()
+    print(f"Propotional Formula {prop_expr} is NOT a Tautology")
