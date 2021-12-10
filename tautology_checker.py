@@ -30,7 +30,7 @@ class Expression:
         """ Overwrites the inbuilt eq function """
         return self.__class__ == other.__class__ and self.equals(other)
 
-    def _append_leaves(self, left_side, right_side):
+    def _update_leaves(self, left_side, right_side):
         leaves = [f"~{node}" for node in left_side]
         leaves.extend([str(node) for node in right_side])
         leaf_list.append(leaves)
@@ -52,7 +52,7 @@ class Expression:
         is_return = None
         for expression in left_side:
             if expression in right_side:
-                self._append_leaves(left_side, right_side)
+                self._update_leaves(left_side, right_side)
                 is_return = True
             if not isinstance(expression, Proposition):
                 left_side.remove(expression)
@@ -72,7 +72,7 @@ class Expression:
         is_return = None
         for expression in right_side:
             if expression in left_side:
-                self._append_leaves(left_side, right_side)
+                self._update_leaves(left_side, right_side)
                 is_return = True
             if not isinstance(expression, Proposition):
                 right_side.remove(expression)
