@@ -6,10 +6,6 @@ Implementation of RS method to verify if the provided propositional logic is a T
 class Expression:
     """ Class to evaluate the propositional logic whether it is a tautology """
 
-    def __invert__(self):
-        """ Overwrites the inbuilt invert function """
-        return NegationOperator(self)
-
     def __and__(self, other):
         """ Overwrites the inbuilt and function """
         return ConjunctionOperator(self, other)
@@ -25,6 +21,10 @@ class Expression:
     def __lshift__(self, other):
         """ Overwrites the inbuilt lshift function """
         return BiconditionalOperator(self, other)
+
+    def __invert__(self):
+        """ Overwrites the inbuilt invert function """
+        return NegationOperator(self)
 
     def __eq__(self, other):
         """ Overwrites the inbuilt eq function """
