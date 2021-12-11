@@ -3,6 +3,8 @@ Implementation of RS method to verify if the provided propositional logic is a T
 Group Members: Vinit Shah, Satwik Rao, Koosha Sharifani, Xiangcheng Wu 
 """
 
+import sys
+
 
 class Expression:
     """ Class to evaluate the propositional logic whether it is a tautology """
@@ -279,13 +281,19 @@ if __name__ == '__main__':
     # Initializes the variables for the formula
     a, b, c, d = initialize_variables('a', 'b', 'c', 'd')
     expression = input("Enter the Formula: ")
-    expression = expression.lower()
-    prop_expr = eval(expression)
+    try:
+        prop_expr = eval(expression.lower())
+    except Exception as e:
+        print(f"Error occured while evaluating the expression: {e}")
+        print(f"Please use the variables: a, b, c, d for the formula")
+        sys.exit(1)
     # Calls the evaluate function to determine whether the formula is a tautology
     is_tautology = prop_expr.evaluate([], [prop_expr])
     if is_tautology:
         print(f"Propotional Formula {prop_expr} is a Tautology")
         print(f"Leaves of the tree: {leaf_list}")
         print(f"Fundamental nodes: {fundamental_list}")
+        sys.exit(0)
     else:
         print(f"Propotional Formula {prop_expr} is NOT a Tautology")
+        sys.exit(1)
