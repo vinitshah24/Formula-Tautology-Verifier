@@ -435,16 +435,22 @@ void show(TreeNode<TreeNode<char>*>* seqs)
 			~ for Negation (# for placeholder in the code. Do not enter it.)
 			^ for Conjunction
 			v for Disjunction
-			-> or > for Implication Operator
-			(Spaces are allowed between characters.)
-			(Do not input two ~ continuously. Seperate them with parentheses like this: ~(~a).)
+			> for Implication
+			(* It supports both () and [].)
+			(* Spaces are not allowed between characters.)
+			(* Do not input two ~ continuously. Separate them with parentheses like this: ~(~a).)
+	INPUT EXAMPLE:
+			(a>b)>((b>c)>(a>c))
+			a>(avb)
+			~(a>c)>[~(cvd)>(a^~c)]
 	OUTPUT: 1. The binary tree representation for this sequence
 			2. The binary tree representation for each leaf
 			(The tree grows from the left side to the right side.)
 			3. Whether the according leaf is fundamental
 			4. Whether this formula is a tautology
-	Please follow the instructions shown on the teminal.
-	* This project requires compilers supporting C++11 or higher versions. Do not use C++98 or C++03.
+	Please follow the instructions shown on the terminal.
+	* This project requires compilers supporting C++11 or higher versions. If you are using command lines:
+			g++ RS_Strategy.cpp -o RS_Strategy -std=c++11
 	* This project does not contain any function for checking grammar error.
 */
 int main() {
@@ -465,32 +471,28 @@ int main() {
 			continue;
 		}
 
-		// 2. clean the input
-		seq.erase(remove(seq.begin(), seq.end(), '-'), seq.end());  // erase '-'
-		seq.erase(remove(seq.begin(), seq.end(), ' '), seq.end());  // erase space
-
-		// 3. seq -> reverse polish notation -> binary tree
+		// 2. seq -> reverse polish notation -> binary tree
 		seq = ReversePolishNotation(seq);
 		TreeNode<char>* seq_tree = buildTree(seq);
-		cout << endl << "The binary tree for this sequence (# is a placeholder for negation):" << endl;
+		cout << endl << "The binary tree for this formula (# is a placeholder for negation):" << endl;
 		show(seq_tree, 0);
 		cout << endl << DELIMITER << endl;
 
-		// 4. insert this tree into the seqs tree
+		// 3. insert this tree into the seqs tree
 		TreeNode<TreeNode<char>*>* seqs = new TreeNode<TreeNode<char>*>;
 		seqs->value = seq_tree;
 
-		// 5. traverse the seqs tree
+		// 4. traverse the seqs tree
 		preOrderTraversal(seqs);
 
-		// 6. print all and check whether it is a tautology
+		// 5. print all and check whether it is a tautology
 		show(seqs);
 		if (tautology)
 			cout << endl << "### This formula is a tautology. ###" << endl << endl;
 		else
 			cout << endl << "### One leaf is not fundamental. This formula is NOT a tautology. ###" << endl << endl;
 
-		// 7. be ready for the next round
+		// 6. be ready for the next round
 		delete(seqs);
 		tautology = true;
 	}
