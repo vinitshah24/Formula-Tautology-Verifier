@@ -251,6 +251,9 @@ class NegationOperator(Expression):
         """ Represents the class object into the string """
         return f"~{self.child}"
 
+    def equals(self, other):
+        return self.child == other.child
+
 
 def initialize_variables(*prop):
     """ Initializes propositional variables """
