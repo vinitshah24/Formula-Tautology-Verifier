@@ -23,7 +23,7 @@ class Expression:
 
     def __lshift__(self, other):
         """ Overwrites the inbuilt lshift function """
-        return BiconditionalOperator(self, other)
+        return BiConditionalOperator(self, other)
 
     def __invert__(self):
         """ Overwrites the inbuilt invert function """
@@ -205,8 +205,8 @@ class ImplicationOperator(Expression):
         return self.left_child == other.left_child and self.right_child == other.right_child
 
 
-class BiconditionalOperator(Expression):
-    """ Class to perform biconditional operation for the inputs """
+class BiConditionalOperator(Expression):
+    """ Class to perform BiConditional operation for the inputs """
 
     def __init__(self, left_child, right_child):
         """ Initializes the left and right child """
@@ -268,7 +268,7 @@ if __name__ == '__main__':
         Conjunction Operator   &
         Disjunction Operator   |
         Implication Operator   >>
-        Biconditional Operator <<
+        BiConditional Operator <<
     Below are the examples of formula:
         ~(a >> c) >> (~(c | d) >> (a & ~c))
         ~(a >> c) >> (~(c | d) >> (a & c))
@@ -291,10 +291,10 @@ if __name__ == '__main__':
     # Calls the evaluate function to determine whether the formula is a tautology
     is_tautology = prop_expr.evaluate([], [prop_expr])
     if is_tautology:
-        print(f"Propotional Formula {prop_expr} is a Tautology")
+        print(f"Propositional Formula {prop_expr} is a Tautology")
         print(f"Leaves of the tree: {leaf_list}")
         print(f"Fundamental nodes: {fundamental_list}")
         sys.exit(0)
     else:
-        print(f"Propotional Formula {prop_expr} is NOT a Tautology")
+        print(f"Propositional Formula {prop_expr} is NOT a Tautology")
         sys.exit(1)
