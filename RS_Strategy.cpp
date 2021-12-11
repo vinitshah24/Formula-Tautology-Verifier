@@ -1,9 +1,15 @@
-﻿#include <iostream>
+/*
+	Implementation of RS method to verify if the provided propositional logic is a Tautology.
+	Group Members : Vinit Shah, Satwik Rao, Koosha Sharifani, Xiangcheng Wu
+*/
+
+#include <iostream>
 #include <string>
 #include <stack>
 #include <map>
 #include <iomanip>
 
+// macros defined for operaters and reusable strings
 #define CONJUNCT '^'
 #define DISJUNCT 'v'
 #define IMPLICATE '>'
@@ -14,15 +20,15 @@
 
 using namespace std;
 
-// set priority for logic operators
+// set priority for the prepositional operators
 map<char, int> prior = { {CONJUNCT, 1}, {DISJUNCT, 1}, {IMPLICATE, 1}, {NEGATION, 2} };
-// two vectors storing formulas and negative formulas
+// two vectors storing positive formulas and negative formulas
 string pos, neg;
 // two global parameters
 bool fundamental = false;
 bool tautology = true;
 
-// tree class
+// define the tree
 template<class T> class TreeNode
 {
 public:
@@ -45,7 +51,7 @@ public:
 	}
 };
 
-// transform to reverse polish notation
+// transform the raw formula to a reverse polish notation
 string ReversePolishNotation(string raw)
 {
 	char c_tmp;
@@ -113,18 +119,10 @@ string ReversePolishNotation(string raw)
 	return reverse_polish;
 }
 
-// transform to binary tree
+// transform the reverse polish notation to a binary tree
 TreeNode<char>* buildTree(string s)
 {
 	TreeNode<char>* tn = new TreeNode<char>;
-
-	// empty tree error
-	if (s.length() == 0)
-	{
-		cout << endl << "The tree is empty!" << endl;
-		return tn;
-	}
-
 	char c_tmp;
 	stack<TreeNode<char>*> st;
 
@@ -135,11 +133,11 @@ TreeNode<char>* buildTree(string s)
 		// operator
 		if (prior[c_tmp] >= 1)
 		{
-			// right
+			// right branch
 			TreeNode<char>* tn_tmp = st.top();
 			tn->right = tn_tmp;
 			st.pop();
-			// left
+			// left branch
 			tn_tmp = st.top();
 			tn->left = tn_tmp;
 			st.pop();
@@ -152,7 +150,7 @@ TreeNode<char>* buildTree(string s)
 	return tn;
 }
 
-// copy binary tree
+// copy a binary tree
 void copyTree(TreeNode<char>* ori_tree, TreeNode<char>* new_tree)
 {
 	if (!ori_tree)
@@ -169,7 +167,7 @@ void copyTree(TreeNode<char>* ori_tree, TreeNode<char>* new_tree)
 	}
 }
 
-// copy the changed seq to the left node of seqs tree
+// copy the changed formula to the left node of seqs tree
 void addSeqsTreeLeft(TreeNode<TreeNode<char>*>* seqs)
 {
 	seqs->left = new TreeNode<TreeNode<char>*>;
@@ -189,9 +187,9 @@ void sharedCode(TreeNode<char>* seq, TreeNode<TreeNode<char>*>* seqs)
 	// third layer
 	seq->left->left->value = PLACEHOLDER_C;
 	seq->right->left->value = PLACEHOLDER_C;
-	// change
+	// add the new formula tree into the left branch
 	addSeqsTreeLeft(seqs);
-	// return back
+	// return back to the original formula tree
 	delete(seq->right->left);
 	seq->right->left = seq->left->right;
 	seq->left->right = nullptr;
@@ -203,7 +201,7 @@ void sharedCode(TreeNode<char>* seq, TreeNode<TreeNode<char>*>* seqs)
 // RS Method
 void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* seqs)
 {
-	// decide the branch
+	// find the branch to go into
 	TreeNode<char>* seq = nullptr;
 	if (branch == -1)  // left branch
 		seq = seq_prev->left;
@@ -215,6 +213,7 @@ void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* s
 	// judge the current operator
 	if (seq->value == NEGATION)
 	{
+		// related to the 7th schema in project description
 		if (seq->right->value == NEGATION)
 		{
 			if (branch == -1)  // left branch
@@ -231,12 +230,12 @@ void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* s
 			}
 			else if (branch == 0)  // root
 			{
-				
 				seqs->value = seq->right->right;
 				addSeqsTreeLeft(seqs);
 				seqs->value = seq;
 			}
 		}
+		// related to the 6th schema in project description
 		else if (seq->right->value == IMPLICATE)
 		{
 			// first layer
@@ -248,9 +247,9 @@ void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* s
 			seq->right->left = new TreeNode<char>;
 			// third layer
 			seq->right->left->value = PLACEHOLDER_C;
-			// change
+			// add the new formula tree into the left branch
 			addSeqsTreeLeft(seqs);
-			// return back
+			// return back to the original formula tree
 			delete(seq->right->left);
 			seq->right->left = seq->left;
 			seq->right->value = IMPLICATE;
@@ -258,12 +257,14 @@ void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* s
 			seq->left->value = PLACEHOLDER_C;
 			seq->value = NEGATION;
 		}
+		// related to the 3rd schema in project description
 		else if (seq->right->value == CONJUNCT)
 		{
 			seq->value = DISJUNCT;  // first layer
 			sharedCode(seq, seqs);
 			seq->right->value = CONJUNCT;
 		}
+		// related to the 4th schema in project description
 		else if (seq->right->value == DISJUNCT)
 		{
 			seq->value = CONJUNCT;  // first layer
@@ -271,6 +272,7 @@ void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* s
 			seq->right->value = DISJUNCT;
 		}
 	}
+	// related to the 5th schema in project description
 	else if (seq->value == IMPLICATE)
 	{
 		// remember the location of left branch
@@ -283,12 +285,14 @@ void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* s
 		seq->left->value = NEGATION;
 		seq->left->left->value = PLACEHOLDER_C;
 		seq->left->right = tmp;
+		// add the new formula tree into the left branch
 		addSeqsTreeLeft(seqs);
-		// return back
+		// return back to the original formula tree
 		seq->value = IMPLICATE;
 		seq->left = tmp;
 
 	}
+	// related to the 2nd schema in project description
 	else if (seq->value == CONJUNCT)
 	{
 		// initialize
@@ -319,6 +323,7 @@ void RSMethod(TreeNode<char>* seq_prev, int branch, TreeNode<TreeNode<char>*>* s
 			seq_prev->right = seq;
 		}
 	}
+	// related to the 1st schema in project description
 	else if (seq->value == DISJUNCT)
 	{
 		RSMethod(seq, -1, seqs);
@@ -336,7 +341,7 @@ void preOrderTraversal(TreeNode<TreeNode<char>*>* seqs)
 		preOrderTraversal(seqs->right);
 }
 
-// print seq tree
+// print formula tree
 void show(TreeNode<char>* tn, int d)
 {
 	if (tn)
@@ -347,7 +352,7 @@ void show(TreeNode<char>* tn, int d)
 	}
 }
 
-// print seq tree in a formula
+// find all the indecomposable formulas in a leaf
 void show(TreeNode<char>* tn, bool negation)
 {
 	size_t found = -1;
@@ -359,14 +364,14 @@ void show(TreeNode<char>* tn, bool negation)
 			show(tn->left, false);
 		if (tn->value != DISJUNCT)
 		{
-			if (negation)
+			if (negation)  // save it to the string neg
 			{
 				found = pos.find(tn->value);
 				if (found != string::npos)
 					fundamental = true;
 				neg.push_back(tn->value);
 			}
-			else
+			else  // save it to the string pos
 			{
 				found = neg.find(tn->value);
 				if (found != string::npos)
@@ -384,51 +389,50 @@ void show(TreeNode<TreeNode<char>*>* seqs)
 {
 	if (!seqs->left && !seqs->right)
 	{
+		// print the binary tree for this leaf
 		cout << endl << "The binary tree for this leaf (# is a placeholder for negation):" << endl;
 		show(seqs->value, 0);
-		show(seqs->value, false);
+		// print this leaf in one line
 		cout << endl << "This leaf: ";
+		show(seqs->value, false);
 		for (char c : pos)
 			cout << c << ", ";
 		for (char c : neg)
 			cout << NEGATION << c << ", ";
+		// judge whether it is fundamental
 		if (fundamental)
-		{
-			cout << " (fundamental)" << endl;
-			cout << endl << DELIMITER << endl;
-		}
+			cout << " (fundamental)" << endl << endl << DELIMITER << endl;
 		else
 		{
-			cout << " (NOT fundamental)" << endl;
-			cout << endl << DELIMITER << endl;
+			cout << " (NOT fundamental)" << endl << endl << DELIMITER << endl;
 			tautology = false;
-			// clear
+			// clear the vectors
 			pos.clear();
 			neg.clear();
 			return;
 		}
-		// clear
+		// clear the vectors
 		pos.clear();
 		neg.clear();
 		fundamental = false;
 	}
 	if (seqs->left)
 	{
+		show(seqs->left);
 		if (!tautology)
 			return;
-		show(seqs->left);
 	}
 	if (seqs->right)
 	{
+		show(seqs->right);
 		if (!tautology)
 			return;
-		show(seqs->right);
 	}
 }
 
 /*
 	INPUT: A propositional formula
-			~ for Negation
+			~ for Negation (# for placeholder in the code. Do not enter it.)
 			^ for Conjunction
 			v for Disjunction
 			-> or > for Implication Operator
@@ -448,16 +452,21 @@ int main() {
 	{
 		// 1. input
 		cout << endl << "****************************************************************" << endl;
-		cout << endl << "Please Enter a Sequence (q for quit):" << endl;
+		cout << endl << "Please Enter a Formula (q for quit):" << endl;
 		cout << endl << "(Do not input two ~ continuously. Seperate them with parentheses like this: ~(~a).)" << endl << endl;
 		string seq;
 		getline(cin, seq);
 		if (seq == "q")  // quit
 			return 0;
+		else if (seq == "")  // no input
+		{
+			cout << endl << "The formula is empty, please enter another Formula!" << endl;
+			continue;
+		}
 
 		// 2. clean the input
 		seq.erase(remove(seq.begin(), seq.end(), '-'), seq.end());  // erase '-'
-		seq.erase(remove(seq.begin(), seq.end(), ' '), seq.end());  // erase ' '
+		seq.erase(remove(seq.begin(), seq.end(), ' '), seq.end());  // erase space
 
 		// 3. seq -> reverse polish notation -> binary tree
 		seq = ReversePolishNotation(seq);
@@ -476,9 +485,9 @@ int main() {
 		// 6. print all and check whether it is a tautology
 		show(seqs);
 		if (tautology)
-			cout << endl << "** This formula is a tautology." << endl << endl;
+			cout << endl << "### This formula is a tautology. ###" << endl << endl;
 		else
-			cout << endl << "** One leaf is not fundamental. This formula is NOT a tautology." << endl << endl;
+			cout << endl << "### One leaf is not fundamental. This formula is NOT a tautology. ###" << endl << endl;
 
 		// 7. be ready for the next round
 		delete(seqs);
