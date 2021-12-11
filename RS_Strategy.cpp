@@ -442,9 +442,10 @@ void show(TreeNode<TreeNode<char>*>* seqs)
 	INPUT EXAMPLE:
 			(a>b)>((b>c)>(a>c))
 			a>(avb)
+			~(a>c)>[~(cvd)>(a^c)]
 			~(a>c)>[~(cvd)>(a^~c)]
 	OUTPUT: 1. The binary tree representation for this sequence
-			2. The binary tree representation for each leaf
+			2. The binary tree representation and normal representation for each leaf
 			(The tree grows from the left side to the right side.)
 			3. Whether the according leaf is fundamental
 			4. Whether this formula is a tautology
