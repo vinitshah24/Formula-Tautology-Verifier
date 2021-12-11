@@ -259,10 +259,10 @@ def initialize_variables(*prop):
 
 if __name__ == '__main__':
     """ 
-    INPUT: Enter the propositional formula for the evaluation whether it is a tautology.
+    INPUT: Enter the propositional formula to check if it is a tautology.
     OUTPUT: Prints whether the formula is a tautology or not. 
             If formula is a tautology, then it prints the leaves and fundamental nodes.
-    The variables => a, b, c, d can be used in the formula for evalutating the formula.
+    The variables => a, b, c, d can be used for developing the formula.
     Below are the operators which can be used for generating the formula:
         Negation Operator      ~
         Conjunction Operator   &
@@ -277,6 +277,7 @@ if __name__ == '__main__':
     leaf_list = []
     # List to hold the fundamental nodes
     fundamental_list = []
+    # Variable to check if the fundamental node is found
     is_fundamental = True
     # Initializes the variables for the formula
     a, b, c, d = initialize_variables('a', 'b', 'c', 'd')
