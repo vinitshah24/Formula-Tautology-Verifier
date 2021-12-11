@@ -285,7 +285,7 @@ if __name__ == '__main__':
     try:
         prop_expr = eval(expression.lower())
     except Exception as e:
-        print(f"Error occured while evaluating the expression: {e}")
+        print(f"Error occurred while evaluating the expression: {e}")
         print(f"Please use the variables: a, b, c, d for the formula")
         sys.exit(1)
     # Calls the evaluate function to determine whether the formula is a tautology
