@@ -444,7 +444,8 @@ void show(TreeNode<TreeNode<char>*>* seqs)
 			3. Whether the according leaf is fundamental
 			4. Whether this formula is a tautology
 	Please follow the instructions shown on the teminal.
-	This project does not contain any function for checking grammar error.
+	* This project requires compilers supporting C++11 or higher versions. Do not use C++98 or C++03.
+	* This project does not contain any function for checking grammar error.
 */
 int main() {
 	
