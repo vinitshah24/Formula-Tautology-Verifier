@@ -33,6 +33,11 @@ class Expression:
         """ Overwrites the inbuilt eq function """
         return self.__class__ == other.__class__ and self.equals(other)
 
+    def _appendleafnodes(self, left, right):
+        temp = ["~"+str(x) for x in left]
+        temp += [str(x) for x in right]
+        leafnodes.append(temp)
+
     def _update_leaves(self, left_side, right_side):
         """ Updates the leaves of the tree and also updates the fundamental list 
             if the expression is found to be fundamental 
@@ -40,17 +45,20 @@ class Expression:
         leaves = [f"~{node}" for node in left_side]
         leaves.extend([str(node) for node in right_side])
         leaf_list.append(leaves)
-        global is_fundamental
+        if self._is_fundamental(left_side, right_side):
+            fundamental_list.append(leaves)
+
+    def _is_fundamental(self, left_side, right_side):
+        global is_non_fundamental
         if len(left_side) == len(right_side):
             count = 0
             for node in left_side:
                 if node in right_side:
                     count += 1
             if len(left_side) == count:
-                is_fundamental = False
-                fundamental_list.append(leaves)
-        if is_fundamental:
-            fundamental_list.append(leaves)
+                is_non_fundamental = True
+                return False
+        return not is_non_fundamental
 
     def _evaluate_left(self, left_side, right_side):
         """ Evaluates the left side of the tree """
@@ -281,7 +289,7 @@ if __name__ == '__main__':
     # List to hold the fundamental nodes
     fundamental_list = []
     # Variable to check if the fundamental node is found
-    is_fundamental = True
+    is_non_fundamental = False
     # Initializes the variables for the formula
     a, b, c, d = initialize_variables('a', 'b', 'c', 'd')
     expression = input("Enter the Formula: ")
